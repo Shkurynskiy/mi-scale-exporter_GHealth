@@ -5,8 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:behaviors="clr-namespace:MiScaleExporter.MAUI.Behaviors;assembly=MiScaleExporter.MAUI"
     xmlns:localization="clr-namespace:MiScaleExporter.MAUI.Resources.Localization"
+    xmlns:models="clr-namespace:MiScaleExporter.Models;assembly=MiScaleExporter.MAUI"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:MiScaleExporter.MAUI.ViewModels"
+    x:Name="SettingsRoot"
     Title="{Binding Title}">
     <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <Grid
@@ -307,7 +309,138 @@
                                 Command="{Binding ResetTokensCommand}"
                                 Text="Clear Garmin Tokens"
                                 TextColor="White" />
-                            
+
+                        </StackLayout>
+                    </Border>
+                    <Border>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20" />
+                        </Border.StrokeShape>
+                        <StackLayout
+                            Padding="15,24,15,24"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="Small"
+                                Text="Body Fat Calibration" />
+                            <BoxView
+                                HeightRequest="2"
+                                HorizontalOptions="Fill"
+                                Color="Gray" />
+                            <Label
+                                FontSize="Micro"
+                                Text="Correct the scale's body fat % toward trusted reference measurements (e.g. medical scans). Each point pairs what the scale reported with the reference value at the same time. A line (corrected = a × scale + b) is fitted across all points; muscle mass, water % and protein % are recomputed to match. Bone mass, BMR, visceral fat, metabolic age and BMI are unaffected." />
+
+                            <StackLayout Orientation="Horizontal" Spacing="10">
+                                <CheckBox IsChecked="{Binding UseFatCalibration, Mode=TwoWay}" VerticalOptions="Center" />
+                                <Label
+                                    FontSize="Small"
+                                    Text="Apply calibration to measurements"
+                                    VerticalOptions="Center" />
+                            </StackLayout>
+
+                            <CollectionView ItemsSource="{Binding CalibrationPoints}">
+                                <CollectionView.EmptyView>
+                                    <Label
+                                        FontSize="Micro"
+                                        Text="No calibration points added yet."
+                                        TextColor="Gray" />
+                                </CollectionView.EmptyView>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:FatCalibrationPoint">
+                                        <Grid Padding="0,4" ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label
+                                                Grid.Column="0"
+                                                FontSize="Small"
+                                                Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Column="1"
+                                                FontSize="Small"
+                                                Text="{Binding ScaleFat, StringFormat='scale {0:0.#}%'}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Grid.Column="2"
+                                                FontSize="Small"
+                                                Text="{Binding TrueFat, StringFormat='ref {0:0.#}%'}"
+                                                VerticalOptions="Center" />
+                                            <Button
+                                                Grid.Column="3"
+                                                Padding="0"
+                                                BackgroundColor="Transparent"
+                                                Command="{Binding BindingContext.RemoveCalibrationPointCommand, Source={x:Reference SettingsRoot}}"
+                                                CommandParameter="{Binding .}"
+                                                FontSize="Small"
+                                                Text="✕"
+                                                TextColor="#C0392B"
+                                                WidthRequest="40" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <BoxView
+                                HeightRequest="1"
+                                HorizontalOptions="Fill"
+                                Color="LightGray" />
+
+                            <Label FontSize="Micro" Text="Add a point" />
+                            <Grid ColumnSpacing="8" RowSpacing="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <DatePicker
+                                    Grid.Row="0"
+                                    Grid.ColumnSpan="2"
+                                    Date="{Binding NewPointDate, Mode=TwoWay}"
+                                    FontSize="Small"
+                                    Format="yyyy-MM-dd" />
+                                <Entry
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    FontSize="Small"
+                                    Keyboard="Numeric"
+                                    Placeholder="Scale fat %"
+                                    Text="{Binding NewPointScaleFat, Mode=TwoWay}">
+                                    <Entry.Behaviors>
+                                        <behaviors:NumericDoubleValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <Entry
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    FontSize="Small"
+                                    Keyboard="Numeric"
+                                    Placeholder="Reference fat %"
+                                    Text="{Binding NewPointTrueFat, Mode=TwoWay}">
+                                    <Entry.Behaviors>
+                                        <behaviors:NumericDoubleValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                            </Grid>
+                            <Button
+                                Margin="0,4,0,0"
+                                BackgroundColor="{StaticResource Primary}"
+                                Command="{Binding AddCalibrationPointCommand}"
+                                Text="Add point"
+                                TextColor="White" />
+
+                            <Label
+                                FontSize="Micro"
+                                Text="{Binding CalibrationSummary}"
+                                TextColor="Gray" />
                         </StackLayout>
                     </Border>
                 </StackLayout>

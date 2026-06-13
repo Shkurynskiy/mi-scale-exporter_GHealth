@@ -315,6 +315,9 @@
   <data name="PermissionBluetoothRequired" xml:space="preserve">
     <value>Permission to use Bluetooth is required to scan.</value>
   </data>
+  <data name="BluetoothDisabled" xml:space="preserve">
+    <value>Bluetooth is turned off. Please enable Bluetooth and try again.</value>
+  </data>
   <data name="PermissionLocationRequired" xml:space="preserve">
     <value>Permission to use Location (Bluetooth) is required to scan.</value>
   </data>
