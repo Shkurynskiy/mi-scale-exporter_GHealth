@@ -653,7 +653,16 @@ namespace MiScaleExporter.MAUI.Resources.Localization {
                 return ResourceManager.GetString("PermissionBluetoothRequired", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Bluetooth is turned off. Please enable Bluetooth and try again..
+        /// </summary>
+        internal static string BluetoothDisabled {
+            get {
+                return ResourceManager.GetString("BluetoothDisabled", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Permission to use Location (Bluetooth) is required to scan..
         /// </summary>

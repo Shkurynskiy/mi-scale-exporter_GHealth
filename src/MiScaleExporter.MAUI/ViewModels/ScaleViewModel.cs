@@ -4,6 +4,7 @@ using MiScaleExporter.Permission;
 using MiScaleExporter.MAUI.Resources.Localization;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions;
+using Plugin.BLE.Abstractions.Contracts;
 
 namespace MiScaleExporter.MAUI.ViewModels
 {
