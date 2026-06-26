@@ -15,7 +15,8 @@ public class AboutViewModel : BaseViewModel
         OpenGithubCommand = new Command(async () =>
             await Browser.OpenAsync("https://github.com/lswiderski/mi-scale-exporter"));
         OpenCoffeeCommand = new Command(async () =>
-            await Browser.OpenAsync("https://www.buymeacoffee.com/lukaszswiderski"));
+            // 11111
+            await Browser.OpenAsync("https://www.buymeacoffee.com/"));
         OpenHelpCommand = new Command(async () =>
          await Shell.Current.GoToAsync("///HelpPage"));
     }

@@ -315,11 +315,11 @@
   <data name="PermissionBluetoothRequired" xml:space="preserve">
     <value>Do skanowania wymagana jest zgoda na korzystanie z Bluetooth.</value>
   </data>
-  <data name="PermissionLocationRequired" xml:space="preserve">
-    <value>Do skanowania wymagane jest pozwolenie na korzystanie z funkcji Lokalizacji (Bluetooth).</value>
-  </data>
   <data name="BluetoothDisabled" xml:space="preserve">
     <value>Bluetooth jest wyłączony. Włącz Bluetooth, aby skanować wagę Mi Scale.</value>
+  </data>
+  <data name="PermissionLocationRequired" xml:space="preserve">
+    <value>Do skanowania wymagane jest pozwolenie na korzystanie z funkcji Lokalizacji (Bluetooth).</value>
   </data>
   <data name="Problem" xml:space="preserve">
     <value>Problem</value>
@@ -392,5 +392,29 @@
   </data>
   <data name="WeightLbs" xml:space="preserve">
     <value>Waga (Lbs)</value>
+  </data>
+  <data name="SendToHealthConnect" xml:space="preserve">
+    <value>Send to Health Connect</value>
+  </data>
+  <data name="HealthConnectPermissionsTitle" xml:space="preserve">
+    <value>Permissions Required</value>
+  </data>
+  <data name="HealthConnectPermissionsMessage" xml:space="preserve">
+    <value>Please select MiScaleExporter and turn on the required toggles on the opened Health Connect settings screen.</value>
+  </data>
+  <data name="HealthConnectSuccess" xml:space="preserve">
+    <value>Data successfully sent to Health Connect!</value>
+  </data>
+  <data name="HealthConnectError" xml:space="preserve">
+    <value>Failed to write data.</value>
+  </data>
+  <data name="HealthConnectMinVersionError" xml:space="preserve">
+    <value>Direct system integration with Health Connect is only available on Android 14 and higher.</value>
+  </data>
+  <data name="WeightRequiredError" xml:space="preserve">
+    <value>Weight must be greater than zero.</value>
+  </data>
+  <data name="HealthConnectNotSupported" xml:space="preserve">
+    <value>Health Connect is only supported on Android.</value>
   </data>
 </root>

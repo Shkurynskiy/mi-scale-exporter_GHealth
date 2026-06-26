@@ -9,6 +9,12 @@ using System.Globalization;
 using System.Threading;
 using YetAnotherGarminConnectClient.Dto.Garmin.Fit;
 
+#if ANDROID
+using Android.Health.Connect;
+using Android.Health.Connect.DataTypes;
+using Android.Health.Connect.DataTypes.Units;
+#endif
+
 namespace MiScaleExporter.MAUI.ViewModels
 {
     public class FormViewModel : BaseViewModel, IFormViewModel
@@ -28,6 +34,10 @@ namespace MiScaleExporter.MAUI.ViewModels
             UploadCommand = new Command(OnUpload, ValidateSave);
             GenerateFitFileCommand = new Command(OnGenerateFitFileAsync);
             CancelMFACommand = new Command(OnCancelMFA);
+
+            // Инициализация новой команды для Health Connect
+            SendToHealthConnectCommand = new Command(OnSendToHealthConnect);
+
             this.PropertyChanged +=
                 (_, __) => UploadCommand.ChangeCanExecute();
 
@@ -84,7 +94,7 @@ namespace MiScaleExporter.MAUI.ViewModels
                 TokenSecret = this._tokenSecret,
             };
             var response = await this._garminService.UploadAsync(this.PrepareRequest(), Date.Date.Add(Time), credencials);
-            var message = (response?.IsSuccess ?? false) ? AppSnippets.Uploaded : response?.Message; 
+            var message = (response?.IsSuccess ?? false) ? AppSnippets.Uploaded : response?.Message;
             await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, message, AppSnippets.OK);
             this.IsBusyForm = false;
             if (this._saveTokens)
@@ -99,7 +109,7 @@ namespace MiScaleExporter.MAUI.ViewModels
             }
             await SecureStorage.SetAsync(PreferencesKeys.GarminUserAccessToken, this._accessToken);
             await SecureStorage.SetAsync(PreferencesKeys.GarminUserTokenSecret, this._tokenSecret);
-            if (response?.MFARequested ?? false)    
+            if (response?.MFARequested ?? false)
             {
                 this.ShowMFACode = true;
                 this.ShowEmail = false;
@@ -141,7 +151,7 @@ namespace MiScaleExporter.MAUI.ViewModels
                     await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
                 }
             }
-           
+
             this.IsBusyForm = false;
 
             // This will pop the current page off the navigation stack
@@ -176,8 +186,8 @@ namespace MiScaleExporter.MAUI.ViewModels
                 ExternalApiClientId = _externalApiClientId
             };
 
-            if (Preferences.Get(PreferencesKeys.MuscleMassAsPercentage, false) 
-                && bc.MuscleMass != 0 
+            if (Preferences.Get(PreferencesKeys.MuscleMassAsPercentage, false)
+                && bc.MuscleMass != 0
                 && bc.Weight != 0)
             {
                 bc.MuscleMass = (bc.MuscleMass / 100) * bc.Weight;
@@ -204,10 +214,160 @@ namespace MiScaleExporter.MAUI.ViewModels
             IsAutomaticCalculation = true;
         }
 
+        // --- Реализация метода отправки данных в Health Connect ---
+        private async void OnSendToHealthConnect()
+        {
+#if ANDROID
+            try
+            {
+                if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.UpsideDownCake)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.HealthConnectMinVersionError, AppSnippets.OK);
+                    return;
+                }
+
+                this.IsBusyForm = true;
+
+                var context = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity ?? Android.App.Application.Context;
+
+                // Список необходимых разрешений
+                string[] permissions = new string[]
+                {
+                    "android.permission.health.WRITE_WEIGHT",
+                    "android.permission.health.WRITE_BODY_FAT",
+                    "android.permission.health.WRITE_BONE_MASS",
+                    "android.permission.health.WRITE_BODY_WATER_MASS"
+                };
+
+                // Проверяем, выданы ли разрешения пользователем
+                bool allGranted = true;
+                foreach (var perm in permissions)
+                {
+                    if (context.CheckSelfPermission(perm) != Android.Content.PM.Permission.Granted)
+                    {
+                        allGranted = false;
+                        break;
+                    }
+                }
+
+                // Если хотя бы одно разрешение не выдано, открываем системные настройки Health Connect для нашего приложения
+                if (!allGranted)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        AppSnippets.HealthConnectPermissionsTitle,
+                        AppSnippets.HealthConnectPermissionsMessage,
+                        AppSnippets.OK);
+
+                    Android.Content.Intent intent;
+                    if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.UpsideDownCake)
+                    {
+                        // Полностью открытый системный интент для Android 14+, который не вызывает ошибку SecurityException
+                        intent = new Android.Content.Intent("android.health.connect.action.HEALTH_HOME_SETTINGS");
+                    }
+                    else
+                    {
+                        // Интент для Android 13 и младше
+                        intent = new Android.Content.Intent("androidx.health.ACTION_HEALTH_CONNECT_SETTINGS");
+                    }
+
+                    intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+                    context.StartActivity(intent);
+
+                    this.IsBusyForm = false;
+                    return;
+                }
+
+                var healthConnectManager = (HealthConnectManager)context.GetSystemService("healthconnect");
+                if (healthConnectManager == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.HealthConnectError, AppSnippets.OK);
+                    this.IsBusyForm = false;
+                    return;
+                }
+
+                // Извлекаем и нормализуем данные
+                var bc = this.PrepareRequest();
+
+                if (bc.Weight <= 0)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.WeightRequiredError, AppSnippets.OK);
+                    this.IsBusyForm = false;
+                    return;
+                }
+
+                var records = new System.Collections.Generic.List<Record>();
+                var now = Java.Time.Instant.Now();
+                var metadata = new Metadata.Builder().Build();
+
+                // 1. Вес (WeightRecord) - передается в граммах (кг * 1000)
+                var weightMass = Mass.FromGrams(bc.Weight * 1000);
+                var weightRecord = new WeightRecord.Builder(metadata, now, weightMass).Build();
+                records.Add(weightRecord);
+
+                // 2. Процент жира (BodyFatRecord) - передается в процентах от 0 до 100
+                if (bc.Fat > 0)
+                {
+                    var fatPercent = Percentage.FromValue(bc.Fat);
+                    var bodyFatRecord = new BodyFatRecord.Builder(metadata, now, fatPercent).Build();
+                    records.Add(bodyFatRecord);
+                }
+
+                // 3. Костная масса (BoneMassRecord) - передается в граммах (кг * 1000)
+                if (bc.BoneMass > 0)
+                {
+                    var boneMass = Mass.FromGrams(bc.BoneMass * 1000);
+                    var boneRecord = new BoneMassRecord.Builder(metadata, now, boneMass).Build();
+                    records.Add(boneRecord);
+                }
+
+                // 4. Масса воды (BodyWaterMassRecord) 
+                // Высчитываем массу воды: (Процент воды / 100) * Общий вес в кг
+                if (bc.WaterPercentage > 0)
+                {
+                    double waterInKg = (bc.WaterPercentage / 100.0) * bc.Weight;
+                    var waterMass = Mass.FromGrams(waterInKg * 1000);
+                    var waterRecord = new BodyWaterMassRecord.Builder(metadata, now, waterMass).Build();
+                    records.Add(waterRecord);
+                }
+
+                // Отправка данных
+                var executor = Java.Util.Concurrent.Executors.NewSingleThreadExecutor();
+                var tcs = new TaskCompletionSource<bool>();
+                var callback = new HealthConnectCallback(tcs);
+
+                healthConnectManager.InsertRecords(records, executor, callback);
+
+                bool success = await tcs.Task;
+
+                if (success)
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.HealthConnectSuccess, AppSnippets.OK);
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.HealthConnectError, AppSnippets.OK);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, $"{AppSnippets.HealthConnectError}: {ex.Message}", AppSnippets.OK);
+            }
+            finally
+            {
+                this.IsBusyForm = false;
+            }
+#else
+            await Application.Current.MainPage.DisplayAlert(AppSnippets.Response, AppSnippets.HealthConnectNotSupported, AppSnippets.OK);
+#endif
+        }
+
         public Command UploadCommand { get; }
         public Command CancelMFACommand { get; }
 
         public Command GenerateFitFileCommand { get; }
+
+        // Свойство для привязки кнопки к Health Connect
+        public Command SendToHealthConnectCommand { get; }
 
         private string _weight;
 
@@ -454,4 +614,27 @@ namespace MiScaleExporter.MAUI.ViewModels
         }
 
     }
+
+#if ANDROID
+    // Вспомогательный класс для обработки результатов Health Connect
+    public class HealthConnectCallback : Java.Lang.Object, Android.OS.IOutcomeReceiver
+    {
+        private readonly TaskCompletionSource<bool> _tcs;
+
+        public HealthConnectCallback(TaskCompletionSource<bool> tcs)
+        {
+            _tcs = tcs;
+        }
+
+        public void OnResult(Java.Lang.Object result)
+        {
+            _tcs.TrySetResult(true);
+        }
+
+        public void OnError(Java.Lang.Throwable error)
+        {
+            _tcs.TrySetException(new System.Exception(error.Message));
+        }
+    }
+#endif
 }

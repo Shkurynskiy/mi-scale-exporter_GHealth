@@ -16,7 +16,8 @@ public partial class HelpPage : ContentPage
         OpenGithubCommand = new Command(async () =>
          await Browser.OpenAsync("https://github.com/lswiderski/mi-scale-exporter"));
         OpenCoffeeCommand = new Command(async () =>
-            await Browser.OpenAsync("https://www.buymeacoffee.com/lukaszswiderski"));
+            // 11111
+            await Browser.OpenAsync("https://www.buymeacoffee.com/"));
 
         InitializeComponent();
     }

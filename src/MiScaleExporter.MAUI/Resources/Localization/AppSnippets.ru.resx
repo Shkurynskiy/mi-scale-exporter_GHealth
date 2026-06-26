@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutGarmin" xml:space="preserve">
-    <value>This application is an open source community project and I have no affiliation with Garmin.</value>
+    <value>Ця програма є спільнотним проектом з відкритим кодом, і я не маю жодного стосунку до Garmin.</value>
   </data>
   <data name="AboutMeasureInstruction" xml:space="preserve">
     <value>Set the bluetooth address of the scale, and your data in the settings. Stand on your scale. Measure yourself. Mi Body Composition Scale is active up to 15 min after the measurement.</value>
@@ -130,13 +130,13 @@
     <value>Then you can review your data and upload it to Garmin Cloud. If you do not have Mi scale and just want to manually insert the data, you can so.</value>
   </data>
   <data name="Age" xml:space="preserve">
-    <value>Age</value>
+    <value>Вік</value>
   </data>
   <data name="AlternateExternalAPIAddress" xml:space="preserve">
     <value>Alternate External API Address</value>
   </data>
   <data name="AppSettings" xml:space="preserve">
-    <value>App Settings</value>
+    <value>Налаштування</value>
   </data>
   <data name="BasalMetabolosimKCal" xml:space="preserve">
     <value>Basal Metabolism (kCal):</value>
@@ -196,10 +196,10 @@
     <value>Garmin Settings</value>
   </data>
   <data name="GenerateOnlyFitFile" xml:space="preserve">
-    <value>Generate only .fit file</value>
+    <value>Згенерувати .fit файл</value>
   </data>
   <data name="GoToScan" xml:space="preserve">
-    <value>Go to scan</value>
+    <value>До сканування</value>
   </data>
   <data name="Height" xml:space="preserve">
     <value>Height</value>
@@ -214,7 +214,7 @@
     <value>Keep in mind that this is my hobby project. It was created for my inner needs and I believe it may be useful to others as well. I do not receive any compensation for creating and maintaining this project. If you want to support the development or thank me, you can buy me a coffee.</value>
   </data>
   <data name="HelpConnect" xml:space="preserve">
-    <value>1. How to connect to the scale</value>
+    <value>1. Як підключитися до вагів</value>
   </data>
   <data name="HelpConnectDescription" xml:space="preserve">
     <value>Set the Bluetooth address of the scale in settings. Set the correct age/height/gender values. Measure yourself. The scale is active for up to 15 minutes after measurement.</value>
@@ -298,7 +298,7 @@
     <value>Muscle Mass (%)</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Not found</value>
+    <value>Не знайдено</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -367,10 +367,10 @@
     <value>Uploaded</value>
   </data>
   <data name="Uploading" xml:space="preserve">
-    <value>Uploading...</value>
+    <value>Завантаження...</value>
   </data>
   <data name="UploadToGarminCloud" xml:space="preserve">
-    <value>Upload to Garmin Cloud</value>
+    <value>Надіслати до Garmin Cloud</value>
   </data>
   <data name="UseExternalAPI" xml:space="preserve">
     <value>Use External API</value>
@@ -385,36 +385,36 @@
     <value>Visit the project repository</value>
   </data>
   <data name="WaterPercent" xml:space="preserve">
-    <value>Water (%)</value>
+    <value>Вода (%)</value>
   </data>
   <data name="WeightKg" xml:space="preserve">
-    <value>Weight (Kg)</value>
+    <value>Вага (Kg)</value>
   </data>
   <data name="WeightLbs" xml:space="preserve">
-    <value>Weight (Lbs)</value>
+    <value>Вага (Lbs)</value>
   </data>
   <data name="SendToHealthConnect" xml:space="preserve">
-    <value>Send to Health Connect</value>
+    <value>Надіслати до Health Connect</value>
   </data>
   <data name="HealthConnectPermissionsTitle" xml:space="preserve">
-    <value>Permissions Required</value>
+    <value>Потрібні дозволи</value>
   </data>
   <data name="HealthConnectPermissionsMessage" xml:space="preserve">
-    <value>Please select MiScaleExporter and turn on the required toggles on the opened Health Connect settings screen.</value>
+    <value>Будь ласка, виберіть MiScaleExporter у списку дозволів і увімкніть необхідні тумблери на екрані налаштувань Health Connect.</value>
   </data>
   <data name="HealthConnectSuccess" xml:space="preserve">
-    <value>Data successfully sent to Health Connect!</value>
+    <value>Дані успішно надіслані до Health Connect!</value>
   </data>
   <data name="HealthConnectError" xml:space="preserve">
-    <value>Failed to write data.</value>
+    <value>Не вдалося записати дані.</value>
   </data>
   <data name="HealthConnectMinVersionError" xml:space="preserve">
-    <value>Direct system integration with Health Connect is only available on Android 14 and higher.</value>
+    <value>Пряма системна інтеграція з Health Connect доступна лише на Android 14 та вище.</value>
   </data>
   <data name="WeightRequiredError" xml:space="preserve">
-    <value>Weight must be greater than zero.</value>
+    <value>Вага має бути більшою за нуль.</value>
   </data>
   <data name="HealthConnectNotSupported" xml:space="preserve">
-    <value>Health Connect is only supported on Android.</value>
+    <value>Health Connect підтримується лише на Android.</value>
   </data>
 </root>

@@ -15,7 +15,7 @@
 		<ApplicationTitle>MiScaleExporter.MAUI</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.lukaszswiderski.miscaleexporter.maui</ApplicationId>
+		<ApplicationId>com.SVG.miscaleexporter.maui</ApplicationId>
 		<ApplicationIdGuid>f67014c4-0bdb-47bd-b669-da42bf0d67c4</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -92,7 +92,6 @@
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="NLog" Version="5.3.1" />
 	  <PackageReference Include="NLog.Extensions.Logging" Version="5.3.9" />
-	  <PackageReference Include="Plugin.AdMob" Version="2.3.2-beta.7" />
 	  <PackageReference Include="Plugin.BLE" Version="3.2.0-beta.1" />
 	  <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
 	  <PackageReference Include="YetAnotherGarminConnectClient" Version="0.0.17" />

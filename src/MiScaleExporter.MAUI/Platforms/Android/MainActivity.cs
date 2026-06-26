@@ -7,7 +7,9 @@ using MiScaleExporter.Permission;
 
 namespace MiScaleExporter.MAUI
 {
-    [Activity(Label = "MiScale Exporter", Theme = "@style/Maui.SplashTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
+    [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
+    [IntentFilter(new[] { "android.intent.action.VIEW_PERMISSION_USAGE" },
+    Categories = new[] { "android.intent.category.HEALTH_PERMISSIONS" })]
     public class MainActivity : MauiAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
